@@ -1,21 +1,19 @@
 
 
 class Board
-  def mines_grid
-    @mines_grid
-  end
 
-  def board
-    @board
-  end
+  attr_accessor :mines_grid
+  attr_accessor :board
+  attr_accessor :board_mask
+  attr_accessor :opened
+  attr_accessor :number_mines
 
-  def board_mask
-    @board_mask
-  end
 
   # n = size of grid (NxN)
   # m = number of mines
   def initialize(m, n)
+    @number_mines = n
+    @opened = 0
     # create a linear array with zeros representing all the places that do not contain mines
     zeros = Array.new(m*m-n, 0)
     # create a linear array representing the mines (ones)
@@ -32,10 +30,17 @@ class Board
   def open_pos(row, col)
     if inside_grid?(row, col) && !is_open(row,col)
       board_mask[row][col] = 1
+      @opened += 1
       if board[row][col] == 0
         nearby_elements(row, col).each{ |nearby_row, nearby_col|
           open_pos(nearby_row, nearby_col)
         }
+      elsif mines_grid[row][col] == 1
+        return -2 # lost
+
+      elsif @opened == @number_mines
+        return -3 # won
+
       end
       1
 
@@ -45,8 +50,10 @@ class Board
     end
   end
 
+
+
   def is_open(row, col)
-     board_mask[row][col] == 1
+    board_mask[row][col] == 1
   end
   def update_board
     @board = Array.new(mines_grid.size){Array.new(mines_grid.size)}
@@ -66,6 +73,16 @@ class Board
     (0..(board.size-1)).each { |row|
       (0..(board.size-1)).each { |position|
         print board_mask[row][position] == 1 ? board[row][position].to_s + ' ' : '? '
+      }
+      puts
+    }
+  end
+
+  def print_board_all
+    puts
+    (0..(board.size-1)).each { |row|
+      (0..(board.size-1)).each { |position|
+        print board[row][position].to_s + ' '
       }
       puts
     }
