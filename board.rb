@@ -1,10 +1,14 @@
 
 
-
-class Grid
-  def grid
-    @grid
+class Board
+  def mines_grid
+    @mines_grid
   end
+
+  def board
+    @board
+  end
+
   # n = size of grid (NxN)
   # m = number of mines
   def initialize(m, n)
@@ -15,15 +19,36 @@ class Grid
     # merge the two into another linear array
     zeros.concat(ones).shuffle!
     # split the array into smaller ones of same size representing the grid lines
-    @grid = zeros.each_slice(m).to_a
+    @mines_grid = zeros.each_slice(m).to_a
+    update_board
   end
 
+  def update_board
+    @board = Array.new(mines_grid.size){Array.new(mines_grid.size)}
+    (0..board.size-1).each { |row|
+      (0..board.size-1).each{ |col|
+        if mines_grid[row][col] == 1
+          board[row][col] = 'B'
+        else
+          board[row][col] = number_mines(row,col)
+        end
+      }
+    }
+  end
+
+  def print_board
+    puts
+    board.each { |row|
+      puts row.inspect
+    }
+    puts
+  end
   # returns how many mines are around the given location
   def number_mines(row, col)
     sum = 0
     if inside_grid?(row,col)
       nearby_elements(row,col).each{ |nearby_elem_row, nearby_elem_col|
-        sum += grid[nearby_elem_row][nearby_elem_col]
+        sum += mines_grid[nearby_elem_row][nearby_elem_col]
       }
       sum
 
@@ -35,7 +60,7 @@ class Grid
 
 
   def inside_grid?(row, col)
-    if (!row.between?(0, @grid.size-1)) || (!col.between?(0, @grid.size-1))
+    if (!row.between?(0, @mines_grid.size-1)) || (!col.between?(0, @mines_grid.size-1))
       false
 
     else
@@ -62,11 +87,14 @@ class Grid
 
   end
 
+  def print_grid
+    puts
+    mines_grid.each { |row|
+      puts row.inspect
+    }
+    puts
+  end
+
+
+
 end
-
-grid = Grid.new(4, 8)
-grid.grid.each { |row|
-  puts row.inspect
-}
-
-puts grid.number_mines(0, 0)
