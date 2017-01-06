@@ -9,6 +9,10 @@ class Board
     @board
   end
 
+  def board_mask
+    @board_mask
+  end
+
   # n = size of grid (NxN)
   # m = number of mines
   def initialize(m, n)
@@ -21,8 +25,29 @@ class Board
     # split the array into smaller ones of same size representing the grid lines
     @mines_grid = zeros.each_slice(m).to_a
     update_board
+    # initialize the board mask with zeros (which means not position open)
+    @board_mask = Array.new(mines_grid.size){Array.new(mines_grid.size){0}}
   end
 
+  def open_pos(row, col)
+    if inside_grid?(row, col) && !is_open(row,col)
+      board_mask[row][col] = 1
+      if board[row][col] == 0
+        nearby_elements(row, col).each{ |nearby_row, nearby_col|
+          open_pos(nearby_row, nearby_col)
+        }
+      end
+      1
+
+    else
+      -1
+
+    end
+  end
+
+  def is_open(row, col)
+     board_mask[row][col] == 1
+  end
   def update_board
     @board = Array.new(mines_grid.size){Array.new(mines_grid.size)}
     (0..board.size-1).each { |row|
@@ -38,7 +63,17 @@ class Board
 
   def print_board
     puts
-    board.each { |row|
+    (0..(board.size-1)).each { |row|
+      (0..(board.size-1)).each { |position|
+        print board_mask[row][position] == 1 ? board[row][position].to_s + ' ' : '? '
+      }
+      puts
+    }
+  end
+
+  def print_board_mask
+    puts
+    board_mask.each { |row|
       puts row.inspect
     }
     puts
