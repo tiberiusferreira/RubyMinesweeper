@@ -1,5 +1,5 @@
 require_relative 'board'
-require_relative 'tests/board_test'
+# require_relative 'tests/board_test'
 class Game
 
   attr_accessor :board_size
@@ -28,7 +28,6 @@ class Game
   # main game loop
   def run
     while 1
-      @board.print_grid
       @board.print_board
       row = get_int("Please type a row number (0-#{board_size-1})")
       col = get_int("Please type a col number (0-#{board_size-1})")
