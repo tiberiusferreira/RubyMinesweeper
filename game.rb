@@ -1,4 +1,5 @@
 require_relative 'board'
+require_relative 'board_test'
 class Game
 
   attr_accessor :board_size
@@ -47,7 +48,6 @@ class Game
           @board.print_unlocked_board
           exit(0)
         else
-
           next
       end
     end

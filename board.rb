@@ -9,26 +9,33 @@ class Board
   attr_accessor :quantity_mines
 
 
-  # n = size of grid (NxN)
-  # m = number of mines
+  # grid_size = size of grid (NxN)
+  # number_mines = number of mines
+  # input_mines_grid = binary 2D array representing mines (1 = mine, 0 = not mine)
+  # Either give number_mines and grid_size or give an input_mines_grid 2D array
   public
-  def initialize(m, n)
-    @quantity_mines = n
+  def initialize(number_mines, grid_size, input_mines_grid = nil)
+    if input_mines_grid.nil?
+      # create a linear array with zeros representing all the places that do not contain mines
+      zeros = Array.new(number_mines*number_mines-grid_size, 0)
+      # create a linear array representing the mines (ones)
+      ones = Array.new(grid_size,1)
+      # merge the two into another linear array
+      zeros.concat(ones).shuffle!
+      # split the array into smaller ones of same size representing the grid lines
+      @mines_grid = zeros.each_slice(number_mines).to_a
+    else
+      @mines_grid = input_mines_grid
+    end
+    @quantity_mines = grid_size
     @opened = 0
-    # create a linear array with zeros representing all the places that do not contain mines
-    zeros = Array.new(m*m-n, 0)
-    # create a linear array representing the mines (ones)
-    ones = Array.new(n,1)
-    # merge the two into another linear array
-    zeros.concat(ones).shuffle!
-    # split the array into smaller ones of same size representing the grid lines
-    @mines_grid = zeros.each_slice(m).to_a
     # fill each board position with the number of mines next to it or B if the position
     # has a mine
     update_board
     # initialize the board mask with zeros (which means position not open)
     @board_mask = Array.new(mines_grid.size){Array.new(mines_grid.size){0}}
   end
+
 
   # Opens a position on the board by changing the board mask, so next time the board
   # is printed its going to show the number of mines close to that position
@@ -53,7 +60,7 @@ class Board
       elsif mines_grid[row][col] == 1
         return 2 # lost
       # if opened all positions expect the mines, player won
-      elsif @opened == (board.size)*(board.size) - @quantity_mines
+      elsif opened == (board.size)*(board.size) - quantity_mines
         return 3 # won
       end
       # if it is inside grid, not opened and the game is not finished
@@ -143,7 +150,7 @@ class Board
 
   private
   def inside_grid?(row, col)
-    if (!row.between?(0, @mines_grid.size-1)) || (!col.between?(0, @mines_grid.size-1))
+    if (!row.between?(0, mines_grid.size-1)) || (!col.between?(0, mines_grid.size-1))
       false
 
     else
