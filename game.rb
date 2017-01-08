@@ -1,5 +1,5 @@
 require_relative 'board'
-require_relative 'board_test'
+require_relative 'tests/board_test'
 class Game
 
   attr_accessor :board_size

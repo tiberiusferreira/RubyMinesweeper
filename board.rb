@@ -29,7 +29,7 @@ class Board
     end
     @quantity_mines = grid_size
     @opened = 0
-    # fill each board position with the number of mines next to it or B if the position
+    # fill each board position with the number of mines next to it or M if the position
     # has a mine
     update_board
     # initialize the board mask with zeros (which means position not open)
@@ -85,14 +85,15 @@ class Board
   end
 
   # updates board with each position having the number of mines near it
-  # or B if it has a mine
+  # or M if it has a mine
   public
   def update_board
     @board = Array.new(mines_grid.size){Array.new(mines_grid.size)}
     (0..board.size-1).each { |row|
       (0..board.size-1).each{ |col|
+        # if there is a mine at the position, but B
         if mines_grid[row][col] == 1
-          board[row][col] = 'B'
+          board[row][col] = 'M'
         else
           board[row][col] = number_mines(row,col)
         end
