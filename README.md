@@ -5,6 +5,7 @@ Just a toy project to teach myself Ruby
 It implements a Minesweeper game on console.  
 By default it uses a 3x3 grid with 2 mines to help debugging, but it can changed easily.
 
+To run it, just run the game.rb file (ruby game.rb)
 Here is a game example:
 
 ? ? ?  
